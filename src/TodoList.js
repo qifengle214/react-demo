@@ -1,55 +1,47 @@
-import React, { Component, Fragment } from "react";
-import TodoItem from './TodoItem'
+import React, { Component, Fragment } from 'react';
+import 'antd/dist/antd.css';
+import { Input, Button, List } from 'antd';
+import store from './store';
+import { getInpChange, getInpSubmit, getDelItem } from './store/actionCreators';
 
 export default class TodoList extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            inpValue: '',
-            list: []
-        }
+        this.state = store.getState();
+        store.subscribe(this.storeChange.bind(this));
     }
+
+    storeChange = () => {
+        this.setState(store.getState());
+    }
+
     inpChange = (e) => {
-        this.setState({
-            inpValue: e.target.value
-        })
+        store.dispatch(getInpChange(e.target.value));
     }
-    listChange = () => {
-        const { inpValue, list } = this.state;
-        this.setState({
-            list: [...list, inpValue],
-            inpValue: ''
-        })
+    inpSubmit = () => {
+        store.dispatch(getInpSubmit());
     }
     delItem = (index) => {
-        const { list } = this.state;
-        list.splice(index, 1);
-        this.setState({
-            list
-        })
+        store.dispatch(getDelItem(index));
     }
     render() {
-        const { inpValue, list } = this.state;
-        return (
-            <Fragment>
-                <input
-                    value={inpValue}
-                    onChange={(e) => { this.inpChange(e) }}
-                />
-                <button onClick={this.listChange}>提交</button>
-                <ul>
-                    {
-                        list.map((item, i) => {
-                            return <TodoItem
-                                listItem={item}
-                                key={i}
-                                listKey={i}
-                                delItem={(index) => { this.delItem(index) }}
-                            />
-                        })
-                    }
-                </ul>
-            </Fragment>
-        )
+        const { inpVal, list } = this.state;
+        return <Fragment>
+            <Input
+                placeholder='Input info'
+                value={inpVal} 
+                style={{ width: 300, marginRight: 10 }}
+                onChange={(e) => {this.inpChange(e)}}
+            />
+            <Button type='primary' onClick={this.inpSubmit}>提交</Button>
+            <List
+                style={{ width: 300, marginTop: 10 }}
+                bordered
+                dataSource={list}
+                renderItem={(item,index) => (
+                    <List.Item onClick={() => {this.delItem(index)}}>{item}</List.Item>
+                )}
+            />
+        </Fragment>
     }
 }
