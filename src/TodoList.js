@@ -2,13 +2,17 @@ import React, { Component, Fragment } from 'react';
 import 'antd/dist/antd.css';
 import { Input, Button, List } from 'antd';
 import store from './store';
-import { getInpChange, getInpSubmit, getDelItem } from './store/actionCreators';
+import { getInpChange, getInpSubmit, getDelItem, getTodoList } from './store/actionCreators';
 
 export default class TodoList extends Component {
     constructor(props) {
         super(props);
         this.state = store.getState();
         store.subscribe(this.storeChange.bind(this));
+    }
+
+    componentDidMount(){
+        store.dispatch(getTodoList());
     }
 
     storeChange = () => {

@@ -1,5 +1,5 @@
 import State from './state';
-import { INPCHANGE, ADDLIST, DELITEM } from './actionTypes';
+import { INPCHANGE, ADDLIST, DELITEM, INITSTATE } from './actionTypes';
 
 export default (state = State, action) => {
     if (action.type === INPCHANGE) {
@@ -14,7 +14,11 @@ export default (state = State, action) => {
         return newState;
     } if (action.type === DELITEM) {
         const newState = JSON.parse(JSON.stringify(state));
-        newState.list.splice(action.index,1);
+        newState.list.splice(action.index, 1);
+        return newState;
+    } if (action.type === INITSTATE) {
+        const newState = JSON.parse(JSON.stringify(state));
+        newState.list = action.val;
         return newState;
     } else {
         return state;
